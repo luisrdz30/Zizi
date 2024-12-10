@@ -1,33 +1,43 @@
 // app.js
-document.getElementById('myForm').addEventListener('submit', function(event) {
+document.getElementById('registerForm').addEventListener('submit', function (event) {
     event.preventDefault();
-    
-    const name = this.elements['name'].value.trim();
-    const email = this.elements['email'].value.trim();
 
-    if (!name) {
-        alert('Please enter your name.');
-        return;
-    }
-    if (!email.includes('@')) {
-        alert('Please enter a valid email.');
-        return;
-    }
+    // Obtener los valores de los campos del formulario
+    const formData = {
+        firstName: this.elements['firstName'].value.trim(),
+        lastName: this.elements['lastName'].value.trim(),
+        email: this.elements['email'].value.trim(),
+        address: this.elements['address'].value.trim(),
+        phone: this.elements['phone'].value.trim(),
+        gender: this.elements['gender'].value,
+        age: this.elements['age'].value,
+        dob: this.elements['dob'].value,
+        username: this.elements['username'].value.trim(),
+        password: this.elements['password'].value,
+    };
 
-    // Enviar datos a través de Fetch API
-    fetch('/submit', {
+    // Enviar los datos al servidor mediante fetch
+    fetch('http://localhost:3001/submit', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name, email })
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert('Form submitted successfully: ' + data.message);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to submit the form');
-    });
+        body: JSON.stringify(formData),
+        })
+    
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Registro exitoso: ' + data.message);
+                this.reset(); // Limpiar el formulario
+                sessionStorage.clear(); // Limpiar sessionStorage
+            } else {
+                alert('Error en el registro: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('No se pudo guardar el registro. Por favor, inténtalo más tarde.');
+        });
 });
+
